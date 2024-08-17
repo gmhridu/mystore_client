@@ -4,9 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body{
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
+  border: none;
 }
 
 @layer base {
