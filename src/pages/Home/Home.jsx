@@ -1,11 +1,27 @@
+import useAxiosCommon from "@/components/hooks/useAxiosCommon/useAxiosCommon";
+import LeftSide from "@/components/LeftSide/LeftSide";
+import RightSide from "@/components/RightSide/RightSide";
 import { Input } from "@/components/ui/input";
 import { Heart } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { Search } from "lucide-react";
 import { Menu } from "lucide-react";
 import React from "react";
+import { useQuery } from "react-query";
 
 const Home = () => {
+    const axiosCommon = useAxiosCommon();
+
+    const {data:products =[], isLoading} = useQuery({
+        queryKey: ["products"],
+        queryFn: async () => {
+            const {data} = await axiosCommon.get('/products');
+            return data;
+        }
+    });
+
+    // console.table(products);
+
   return (
     <div className="my-6">
       <div className="bg-[#F5F5F3] py-8">
@@ -27,8 +43,9 @@ const Home = () => {
         </div>
       </div>
 
-      <div>
-        
+      <div className="flex container justify-between gap-x-6 my-6">
+        <LeftSide/>
+        <RightSide className="flex-1" products={products}/>
       </div>
     </div>
   );
