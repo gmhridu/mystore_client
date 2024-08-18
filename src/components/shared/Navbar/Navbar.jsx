@@ -1,84 +1,117 @@
-import { Typography } from "@material-tailwind/react";
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom"; 
+import { NavLink } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Settings, Keyboard, CreditCard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, User, X } from "lucide-react";
-import clsx from "clsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Settings,
+  Keyboard,
+  CreditCard,
+  Users,
+  UserPlus,
+  Mail,
+  MessageSquare,
+  PlusCircle,
+  Plus,
+  Github,
+  LifeBuoy,
+  Cloud,
+  LogOut,
+  User,
+  X,
+} from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
-  const [openNav, setOpenNav] = useState(false); 
-
   const navList = (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:items-center lg:gap-6">
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal text-lg"
+    <ul className="menu menu-horizontal px-1 text-base font-medium flex space-x-6">
+      <NavLink
+        className={({ isActive }) => (isActive ? "text-blue-400" : "")}
+        to={"/"}
       >
-        <NavLink>Pages</NavLink>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal text-lg"
+        Home
+      </NavLink>
+      <NavLink
+        className={({ isActive }) => (isActive ? "text-blue-400" : "")}
+        to={"/about"}
       >
-        <NavLink>Account</NavLink>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal text-lg"
+        About
+      </NavLink>
+
+      <NavLink
+        className={({ isActive }) => (isActive ? "text-blue-400" : "")}
+        to={"/service"}
       >
-        <NavLink>Blocks</NavLink>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal text-lg"
-      >
-        <NavLink>Docs</NavLink>
-      </Typography>
+        Service
+      </NavLink>
     </ul>
   );
 
   return (
     <main>
       <nav className="flex justify-between px-8 items-center py-6">
-        <section className="flex items-center gap-4">
+        <section className="flex items-center gap-x-6">
           {/* menu */}
           <div className="block sm:hidden">
             <Sheet>
-              <SheetTrigger asChild>
-              <FiMenu className="text-3xl cursor-pointer" />
+              <SheetTrigger className="outline-none" asChild>
+                <FiMenu className="text-3xl cursor-pointer" />
               </SheetTrigger>
               <SheetContent side="left">
-              <div className="flex flex-col h-full justify-center items-center">
+                <div className="flex flex-col h-full justify-center items-center">
                   {navList}
                 </div>
               </SheetContent>
             </Sheet>
           </div>
           {/* logo */}
-          <Link to={'/'} className="text-4xl">My Shop</Link>
+          <Link to={"/"} className="text-4xl">
+            My Shop
+          </Link>
+          {/* desktop menu */}
+          <div className="hidden sm:block">
+            <motion.div
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              className="rounded-lg bg-zinc-100 dark:bg-zinc-800"
+              transition={{
+                type: "spring",
+                bounce: 0.2,
+                duration: 0.3,
+              }}
+            >
+              {navList}
+            </motion.div>
+          </div>
         </section>
         {/* sidebar mobile menu */}
         <section className="flex items-center gap-4">
           {/* card icon */}
-          <AiOutlineShoppingCart className="text-2xl"/>
+          <AiOutlineShoppingCart className="text-2xl" />
           {/*  avatar */}
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger className="outline-none">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="profile"/>
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="profile"
+                />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
@@ -165,7 +198,7 @@ const Navbar = () => {
           </DropdownMenu>
         </section>
       </nav>
-      <hr/>
+      <hr />
     </main>
   );
 };
