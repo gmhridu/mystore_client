@@ -44,7 +44,7 @@ const Home = () => {
       </div>
 
       <div className="flex container justify-between gap-x-6 my-6">
-        <LeftSide/>
+        <LeftSide products={products}/>
         <RightSide className="flex-1" products={products}/>
       </div>
     </div>
