@@ -20,7 +20,7 @@ const Home = () => {
         }
     });
 
-    // console.table(products);
+   
 
   return (
     <div className="my-6">

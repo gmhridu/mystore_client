@@ -4,13 +4,18 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/Routes.jsx";
 import { QueryClient, QueryClientProvider } from "react-query";
+import AuthProviders from "./Providers/AuthProviders";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+   <AuthProviders>
+    <Toaster/>
+   <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
     </QueryClientProvider>
+   </AuthProviders>
   </StrictMode>
 );
