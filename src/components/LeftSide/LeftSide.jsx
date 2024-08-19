@@ -43,14 +43,19 @@ const LeftSide = ({ products }) => {
               Shop by Brand
             </AccordionTrigger>
             <AccordionContent>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="terms" />
-                <label
-                  htmlFor="terms"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Accept terms and conditions
-                </label>
+              <div className="flex flex-col">
+               {
+                products?.map((product) => (
+                  <div className="flex items-center gap-4">
+                    <Checkbox key={product?._id} id={product?.brandName} />
+                    <label
+                      htmlFor={product?.brandName}
+                      className="text-sm font-medium text-nowrap peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {product?.brandName}
+                    </label>
+                  </div>
+                ))}
               </div>
             </AccordionContent>
           </AccordionItem>
