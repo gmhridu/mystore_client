@@ -7,24 +7,21 @@ import {
 } from "../ui/accordion";
 import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
+import { Slider } from "../ui/slider";
 
 const LeftSide = ({ products }) => {
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000);
+  const [priceRange, setPriceRange] = useState([0, 2000]);
 
-  
-  const uniqueCategories = [...new Set(products?.map((product)=> product?.category))];
-  const uniqueBrands = [...new Set(products?.map((product)=> product?.brandName))];
-  const uniqueColors = [...new Set(products?.map((product)=> product?.color))];
+  const uniqueCategories = [
+    ...new Set(products?.map((product) => product?.category)),
+  ];
+  const uniqueBrands = [
+    ...new Set(products?.map((product) => product?.brandName)),
+  ];
+  const uniqueColors = [...new Set(products?.map((product) => product?.color))];
 
-  const handleMinPriceChange = (e) => {
-    setMinPrice(e.target.value);
-  };
 
-  const handleMaxPriceChange = (e) => {
-    setMaxPrice(e.target.value);
-  };
-  
+
   return (
     <div>
       <h1 className="font-black text-3xl">Products</h1>
@@ -61,8 +58,7 @@ const LeftSide = ({ products }) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col">
-               {
-                uniqueBrands?.map((brand) => (
+                {uniqueBrands?.map((brand) => (
                   <div className="flex items-center gap-4">
                     <Checkbox key={brand} id={brand} />
                     <label
@@ -85,19 +81,17 @@ const LeftSide = ({ products }) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col">
-                {
-                  uniqueColors?.map((color) => (
-                    <div className="flex items-center gap-4">
-                      <Checkbox key={color} id={color} />
-                      <label
-                        htmlFor={color}
-                        className="text-sm font-medium text-nowrap peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {color}
-                      </label>
-                    </div>
-                  ))
-                }
+                {uniqueColors?.map((color) => (
+                  <div className="flex items-center gap-4">
+                    <Checkbox key={color} id={color} />
+                    <label
+                      htmlFor={color}
+                      className="text-sm font-medium text-nowrap peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {color}
+                    </label>
+                  </div>
+                ))}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -109,41 +103,17 @@ const LeftSide = ({ products }) => {
               Shop by Price
             </AccordionTrigger>
             <AccordionContent>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center space-x-2">
-                  <label
-                    htmlFor="min-price"
-                    className="text-sm font-medium leading-none"
-                  >
-                    Min Price:
-                  </label>
-                  <input
-                    type="number"
-                    id="min-price"
-                    value={minPrice}
-                    onChange={handleMinPriceChange}
-                    className="border rounded px-2 py-1"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <label
-                    htmlFor="max-price"
-                    className="text-sm font-medium leading-none"
-                  >
-                    Max Price:
-                  </label>
-                  <input
-                    type="number"
-                    id="max-price"
-                    value={maxPrice}
-                    onChange={handleMaxPriceChange}
-                    className="border rounded px-2 py-1"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                    Apply
-                  </button>
+              <div className="px-4 py-2">
+                <Slider
+                  value={priceRange}
+                  onValueChange={(newValue) => setPriceRange(newValue)}
+                  min={0}
+                  max={2000}
+                  step={50}
+                />
+                <div className="flex justify-between text-sm mt-2">
+                  <span>${priceRange[0]}</span>
+                  <span>${priceRange[1]}</span>
                 </div>
               </div>
             </AccordionContent>
