@@ -1,36 +1,95 @@
 import React from "react";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Button } from "../ui/button";
+import ProductCard from "../ProductCard/ProductCard";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "../ui/pagination";
+import Loader from "../shared/Loader/Loader";
 
-const RightSide = ({ products }) => {
-  console.table(products);
+const RightSide = ({
+  className,
+  products,
+  onPageChange,
+  currentPage,
+  totalPages,
+  isLoading,
+  isSuccess,
+  isFetched,
+}) => {
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    onPageChange(page);
+  };
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-3 gap-3">
-      {products?.map((product) => (
-        <Card key={product?._id}>
-          <CardHeader>
-            <img
-              src={product?.productImage}
-              alt={product?.productName}
-              className="w-68 h-52 object-cover rounded-sm"
-            />
-          </CardHeader>
-          <CardContent>
-            <h3 className="font-semibold text-nowrap line-clamp-1">{product?.productName}</h3>
-            <p>
-              <span className="text-sm text-gray-600">
-                Price: ${product?.price}
-              </span>
-            </p>
-           <div className="py-2">
-           <Button className="w-full">View Details</Button>
-           </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+  const pageNumbers = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1
   );
+  if (isLoading) return <Loader />;
+
+  if (isFetched || isSuccess) {
+    return (
+      <div className={className}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((product) => (
+            <ProductCard isLoading={isLoading} key={product._id} product={product} />
+          ))}
+        </div>
+
+        <Pagination className="my-3">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`${
+                  currentPage === 1
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black cursor-pointer"
+                }`}
+              />
+            </PaginationItem>
+
+            {pageNumbers.map((page) => (
+              <PaginationItem className="cursor-pointer" key={page}>
+                <PaginationLink
+                  onClick={() => handlePageChange(page)}
+                  className={`${
+                    page === currentPage ? "bg-black text-white" : ""
+                  } px-4 py-2 rounded-md`}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            {totalPages > 5 && currentPage < totalPages - 2 && (
+              <PaginationItem className="cursor-pointer">
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`${
+                  currentPage === totalPages
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black cursor-pointer"
+                }`}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    );
+  }
 };
 
 export default RightSide;
