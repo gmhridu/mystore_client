@@ -64,6 +64,12 @@ const Navbar = () => {
       >
         Service
       </NavLink>
+      <NavLink
+        className={({ isActive }) => (isActive ? "text-blue-400" : "")}
+        to={"/add-product"}
+      >
+        Add Product
+      </NavLink>
     </ul>
   );
 
@@ -85,7 +91,33 @@ const Navbar = () => {
               </SheetTrigger>
               <SheetContent side="left">
                 <div className="flex flex-col h-full justify-center items-center">
-                  {navList}
+                  <ul className="menu menu-horizontal px-1 text-base font-medium flex flex-col items-center space-y-4">
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive ? "text-blue-400" : ""
+                      }
+                      to={"/"}
+                    >
+                      Home
+                    </NavLink>
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive ? "text-blue-400" : ""
+                      }
+                      to={"/about"}
+                    >
+                      About
+                    </NavLink>
+
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive ? "text-blue-400" : ""
+                      }
+                      to={"/service"}
+                    >
+                      Service
+                    </NavLink>
+                  </ul>
                 </div>
               </SheetContent>
             </Sheet>
@@ -183,7 +215,9 @@ const Navbar = () => {
                   <DropdownMenuItem className="cursor-pointer">
                     <Plus className="mr-2 h-4 w-4" />
                     <span>New Team</span>
-                    <DropdownMenuShortcut className="cursor-pointer">⌘+T</DropdownMenuShortcut>
+                    <DropdownMenuShortcut className="cursor-pointer">
+                      ⌘+T
+                    </DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -200,7 +234,10 @@ const Navbar = () => {
                   <span>API</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={handleLogOut}>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={handleLogOut}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                   <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

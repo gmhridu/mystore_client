@@ -1,9 +1,9 @@
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
-import LazyLoad from "react-lazy-load";
 import { useInView } from "react-intersection-observer";
 import Loader from "../shared/Loader/Loader";
+import Image from "../Image/Image";
 
 const ProductCard = ({ product, isLoading }) => {
   const { ref, inView } = useInView({
@@ -11,19 +11,23 @@ const ProductCard = ({ product, isLoading }) => {
     threshold: 0.1,
   });
 
-  if(isLoading) return <Loader/>
+  console.log(product?.productImage);
+
+  if (isLoading) return <Loader />;
   return (
     <Card key={product?._id}>
       <CardHeader>
         <div ref={ref}>
           {inView ? (
-            <img
-              src={product?.productImage}
+            <Image
+              src={product?.productImage?.split("/").pop().split(".")[0]}
               alt={product?.productName}
-              className="w-68 h-52 object-cover rounded-sm"
+              width={256}
+              height={208}
+              className="w-64 h-52 object-cover rounded-sm"
             />
           ) : (
-            <div className="w-68 h-52 bg-gray-200 rounded-sm" />
+            <div className="w-64 h-52 bg-gray-200 rounded-sm" />
           )}
         </div>
       </CardHeader>

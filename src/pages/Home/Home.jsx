@@ -18,7 +18,6 @@ const Home = () => {
     price: [0, 2000],
   });
   const [searchText, setSearchText] = useState("");
-  const { user } = useAuth();
 
   const itemsPerPage = 6;
 
@@ -69,14 +68,16 @@ const Home = () => {
     return data;
   };
 
-  const { data, isLoading, isFetched, isSuccess, isError, isFetching } = useQuery(
-    ['products', currentPage, filter, sort, searchText],
-    fetchProducts,
-    {
-      keepPreviousData: true, 
-      staleTime: 5 * 60 * 1000, 
-    }
-  );
+  const { data, isLoading, isFetched, isSuccess, isError, isFetching } =
+    useQuery(
+      ["products", currentPage, filter, sort, searchText],
+      fetchProducts,
+      {
+        keepPreviousData: true,
+        staleTime: 0,
+        cacheTime: 5 * 60 * 1000,
+      }
+    );
 
   const products = data?.products || [];
   const count = data?.totalProducts || 0;
@@ -112,7 +113,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="flex container justify-between gap-x-6 my-6">
+      <div className="flex flex-col md:flex-row container justify-between gap-x-6 my-6">
         <LeftSide
           products={products}
           onFilterChange={handleFilterChange}
