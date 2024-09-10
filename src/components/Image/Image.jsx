@@ -13,7 +13,14 @@ const Image = ({ src, alt, width, height, ...rest }) => {
   const image = cloudinary.image(src);
 
   image.resize(fill().width(width).height(height));
-  return <AdvancedImage cldImg={image} alt={alt} {...rest} />;
+  return (
+    <AdvancedImage
+      className="w-full h-full object-cover rounded-sm"
+      cldImg={image}
+      alt={alt}
+      {...rest}
+    />
+  );
 };
 
 export default Image;

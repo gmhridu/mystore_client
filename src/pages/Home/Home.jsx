@@ -1,27 +1,34 @@
-import useAuth from "@/components/hooks/useAuth";
-import useAxiosCommon from "@/components/hooks/useAxiosCommon/useAxiosCommon";
+import React, { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchProducts,
+  resetFilters,
+  setCurrentPage,
+  setFilter,
+  setSearchText,
+} from "@/store/Slice/homeSlice";
 import LeftSide from "@/components/LeftSide/LeftSide";
 import RightSide from "@/components/RightSide/RightSide";
 import { Input } from "@/components/ui/input";
-import { Heart, ShoppingCart, Search, Menu } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
-import { useQuery } from "react-query";
+import { Search, Menu } from "lucide-react";
 
 const Home = () => {
-  const axiosCommon = useAxiosCommon();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sort, setSort] = useState("");
-  const [filter, setFilter] = useState({
-    category: [],
-    brand: [],
-    color: [],
-    price: [0, 2000],
-  });
-  const [searchText, setSearchText] = useState("");
+  const dispatch = useDispatch();
+  const {
+    products,
+    totalProducts,
+    currentPage,
+    itemsPerPage,
+    isLoading,
+    filter,
+    sort,
+    searchText,
+  } = useSelector((state) => state.home);
 
-  const itemsPerPage = 6;
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch, currentPage, itemsPerPage, filter, sort, searchText]);
 
-  // Debounce function using setTimeout
   const debounce = (func, delay) => {
     let timer;
     return (...args) => {
@@ -32,56 +39,26 @@ const Home = () => {
 
   const debouncedSearch = useCallback(
     debounce((value) => {
-      setSearchText(value);
+      dispatch(setSearchText(value));
     }, 500),
-    []
+    [dispatch]
   );
 
   const handleSearchTextChange = (e) => {
-    setSearchText(e.target.value);
     debouncedSearch(e.target.value);
   };
 
   const handlePaginationButton = (value) => {
-    setCurrentPage(value);
+    dispatch(setCurrentPage(value));
   };
 
   const handleFilterChange = (filterType, newValue) => {
-    setFilter((prev) => ({
-      ...prev,
-      [filterType]: newValue,
-    }));
+    dispatch(setFilter({ [filterType]: newValue }));
   };
 
   const handleReset = () => {
-    setFilter({ category: [], brand: [], color: [], price: [0, 2000] });
-    setSort("");
-    setSearchText("");
+    dispatch(resetFilters());
   };
-
-  const fetchProducts = async () => {
-    const { data } = await axiosCommon(
-      `/products?page=${currentPage}&size=${itemsPerPage}&filter=${encodeURIComponent(
-        JSON.stringify(filter)
-      )}&sort=${sort}&search=${searchText}`
-    );
-    return data;
-  };
-
-  const { data, isLoading, isFetched, isSuccess, isError, isFetching } =
-    useQuery(
-      ["products", currentPage, filter, sort, searchText],
-      fetchProducts,
-      {
-        keepPreviousData: true,
-        staleTime: 0,
-        cacheTime: 5 * 60 * 1000,
-      }
-    );
-
-  const products = data?.products || [];
-  const count = data?.totalProducts || 0;
-  const numberOfPages = Math.ceil(count / itemsPerPage);
 
   return (
     <div className="my-6">
@@ -100,38 +77,25 @@ const Home = () => {
               value={searchText}
               onChange={handleSearchTextChange}
             />
-            <Search
-              className="absolute md:right-8 right-2 top-2"
-              onClick={() => setSearchText(searchText)}
-            />
-          </div>
-          {/* Icons */}
-          <div className="flex items-center gap-2">
-            <Heart />
-            <ShoppingCart />
+            <Search className="absolute md:right-8 right-2 top-2" />
           </div>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row container justify-between gap-x-6 my-6">
         <LeftSide
-          products={products}
           onFilterChange={handleFilterChange}
           filters={filter}
           onReset={handleReset}
         />
-
         <RightSide
           className="flex-1"
           products={products}
           isLoading={isLoading}
-          isSuccess={isSuccess}
-          isFetched={isFetched}
-          isFetching={isFetching}
-          onPageChange={handlePaginationButton}
           currentPage={currentPage}
+          onPageChange={handlePaginationButton}
           pageSize={itemsPerPage}
-          totalPages={numberOfPages}
+          totalPages={Math.ceil(totalProducts / itemsPerPage)}
         />
       </div>
     </div>

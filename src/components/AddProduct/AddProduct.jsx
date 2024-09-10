@@ -7,9 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import ImageUpload from "../Image/ImageUpload";
 import toast from "react-hot-toast";
-import useAxiosCommon from "../hooks/useAxiosCommon/useAxiosCommon";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
+import { useDispatch } from "react-redux";
+// import { addNewProduct } from "@/store/Slice/productSlice";
 
 const productSchema = z.object({
   productName: z.string().min(1, "Product name is required"),
@@ -17,7 +18,7 @@ const productSchema = z.object({
   price: z
     .string()
     .min(1, "Price is required")
-    .transform((value) => parseFloat(value)) 
+    .transform((value) => parseFloat(value))
     .refine((value) => !isNaN(value) && value > 0, {
       message: "Price must be a valid number greater than zero",
     }),
@@ -28,7 +29,7 @@ const productSchema = z.object({
 });
 
 const AddProduct = () => {
-  const axiosCommon = useAxiosCommon();
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -40,33 +41,33 @@ const AddProduct = () => {
     resolver: zodResolver(productSchema),
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const formattedData = {
-        ...data,
-        price: parseFloat(data.price),
-      };
+ const onSubmit = async (data) => {
+   try {
+     const formattedData = {
+       ...data,
+       price: parseFloat(data.price),
+     };
 
-      const response = await axiosCommon.post("/products", formattedData);
+     const result = await dispatch(addNewProduct(formattedData));
 
-      if (response.status === 201) {
-        toast("Product added successfully!");
-        reset();
-      } else {
-        toast("Failed to add the product. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error adding product:", error);
-      toast("An error occurred while adding the product. Please try again.");
-    }
-  };
+     if (addNewProduct.fulfilled.match(result)) {
+       toast("Product added successfully!");
+       reset();
+     } else {
+       toast("Failed to add the product. Please try again.");
+     }
+   } catch (error) {
+     console.error("Error adding product:", error);
+     toast("An error occurred while adding the product. Please try again.");
+   }
+ };
 
   const handleImageUpload = (imageUrl) => {
     setValue("productImage", imageUrl);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center my-8 h-[70vh]">
+    <div className="flex flex-col items-center justify-center my-10 md:h-[70vh]">
       <Card>
         <CardHeader>Add Product</CardHeader>
         <CardContent>
