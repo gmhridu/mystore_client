@@ -9,7 +9,9 @@ import Loader from "../shared/Loader/Loader";
 
 const PrivateRoutes = ({ children }) => {
   const location = useLocation();
-  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -18,18 +20,30 @@ const PrivateRoutes = ({ children }) => {
 
   if (isLoading) return <Loader />;
 
+  if (location?.pathname === '/') {
+    if (!isAuthenticated) {
+      return <Navigate to="/auth/login" />;
+    } else {
+      if (user?.role === "admin") {
+        return <Navigate to="/admin/dashboard" />;
+      } else {
+        return <Navigate to="/shop/home" />;
+      }
+    }
+  }
   if (
     !isAuthenticated &&
     !location.pathname.includes("/login") &&
     !location.pathname.includes("/register")
   ) {
-    return <Navigate to="/auth/login" />;
+    return <Navigate to="/auth/login" state={{from: location}}/>;
   }
 
   if (isAuthenticated) {
     if (
       location.pathname.includes("/login") ||
-      location.pathname.includes("/register")
+      location.pathname.includes("/register") || 
+      location.pathname === "/"
     ) {
       if (user?.role === "admin") {
         return <Navigate to="/admin/dashboard" />;

@@ -126,5 +126,113 @@ export const addProductFormElements = (control, defaultValues = {}) => [
   },
 ];
 
+export const categoryOptionsMap = {
+  "men": "Men",
+  "women": "Women",
+  "kids": "Kids",
+  "accessories": "Accessories",
+  "footwear": "Footwear",
+};
+
+export const brandOptionsMap = {
+  "nike": "Nike",
+  "adidas": "Adidas",
+  "puma": "Puma",
+  "levi": "Levi's",
+  "zara": "Zara",
+  "h&m": "H&M",
+}
+
+export const filterOptions = {
+  Category: [
+    { id: "men", label: "Men" },
+    { id: "women", label: "Women" },
+    { id: "kids", label: "Kids" },
+    { id: "accessories", label: "Accessories" },
+    { id: "footwear", label: "Footwear" },
+  ],
+  Brand: [
+    { id: "nike", label: "Nike" },
+    { id: "adidas", label: "Adidas" },
+    { id: "puma", label: "Puma" },
+    { id: "levi", label: "Levi's" },
+    { id: "zara", label: "Zara" },
+    { id: "h&m", label: "H&M" },
+  ],
+};
+export const sortOptions = [
+  { id: "price-lowtohigh", label: "Price: Low to High" },
+  { id: "price-hightolow", label: "Price: High to Low" },
+  { id: "title-atoz", label: "Title: A to Z" },
+  { id: "title-ztoa", label: "Title: Z to A" },
+];
+
+export const addressFormControls = (control, defaultValues = {}) => [
+  {
+    name: "address",
+    label: "Address",
+    placeholder: "Enter your address",
+    defaultValue: defaultValues.address || "",
+    control: control,
+    rules: { required: "Address is required" },
+  },
+  {
+    name: "city",
+    label: "City",
+    placeholder: "Enter your city",
+    defaultValue: defaultValues.city || "",
+    control: control,
+    rules: { required: "City is required" },
+  },
+  {
+    name: "state",
+    label: "State",
+    placeholder: "Enter your state",
+    defaultValue: defaultValues.state || "",
+    control: control,
+    rules: { required: "State is required" },
+  },
+  {
+    name: "zip",
+    label: "Zip Code",
+    placeholder: "Enter your zip code",
+    defaultValue: defaultValues.zip || "",
+    control: control,
+    type: "text",
+    rules: { required: "Zip code is required" },
+  },
+  {
+    name: "phone",
+    label: "Phone",
+    placeholder: "Enter your phone number",
+    defaultValue: defaultValues.phone || "",
+    control: control,
+    type: "text",
+    rules: {
+      required: "Phone number is required",
+    },
+  },
+  {
+    name: "notes",
+    label: "Notes",
+    placeholder: "Additional notes (optional)",
+    defaultValue: defaultValues.notes || "",
+    control: control,
+    type: "textarea",
+    rules: {},
+  },
+];
+
+export const adminOrderDetailsSelect = [
+  { label: "Pending", value: "pending" },
+  { label: "Processing", value: "processing" },
+  { label: "Shipped", value: "shipped" },
+  { label: "Delivered", value: "delivered" },
+  { label: "Cancelled", value: "cancelled" },
+];
+
+
+
+
 
 

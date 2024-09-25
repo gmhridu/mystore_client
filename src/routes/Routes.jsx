@@ -18,6 +18,8 @@ import Checkout from "@/pages/ShoppingView/Checkout";
 import Account from "@/pages/ShoppingView/Account";
 import PrivateRoutes from "@/components/Common/PrivateRoutes";
 import UnauthPage from "@/pages/UnauthPage/UnauthPage";
+import OrderProcessing from "@/components/ShoppingLayout/OrderProcessing";
+import PaymentSuccessful from "@/components/ShoppingLayout/PaymentSuccessful";
 
 const router = createBrowserRouter([
   {
@@ -88,11 +90,19 @@ const router = createBrowserRouter([
         path: "account",
         element: <Account />,
       },
+      {
+        path: "payment-return",
+        element: <OrderProcessing />,
+      },
+      {
+        path: "success",
+        element: <PaymentSuccessful />,
+      },
     ],
   },
   {
-    path: '/unauth-page',
-    element: <UnauthPage/>
+    path: "/unauth-page",
+    element: <UnauthPage />,
   },
   {
     path: "*",

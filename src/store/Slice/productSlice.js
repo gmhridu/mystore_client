@@ -27,26 +27,36 @@ export const addNewProducts = createAsyncThunk(
   }
 );
 
-export const getProducts = createAsyncThunk('/products/getProducts', async () => {
-  const { data } = await axios.get(
-    `${import.meta.env.VITE_BASE_URL}/products/get`
-  );
-  return data;
-});
+export const getProducts = createAsyncThunk(
+  "/products/getProducts",
+  async () => {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/products/get`
+    );
+    return data;
+  }
+);
 
-export const updateProduct = createAsyncThunk('/products/updateProduct', async ({id, formData}) => { 
-  const { data } = await axios.put(
-    `${import.meta.env.VITE_BASE_URL}/products/edit/${id}`, formData
-  );
-  return data;
-})
+export const updateProduct = createAsyncThunk(
+  "/products/updateProduct",
+  async ({ id, formData }) => {
+    const { data } = await axios.put(
+      `${import.meta.env.VITE_BASE_URL}/products/edit/${id}`,
+      formData
+    );
+    return data;
+  }
+);
 
-export const deleteProduct = createAsyncThunk('/products/deleteProduct', async (productId) => { 
-  const { data } = await axios.delete(
-    `${import.meta.env.VITE_BASE_URL}/products/delete/${productId}`
-  );
-  return data;
-})
+export const deleteProduct = createAsyncThunk(
+  "/products/deleteProduct",
+  async (productId) => {
+    const { data } = await axios.delete(
+      `${import.meta.env.VITE_BASE_URL}/products/delete/${productId}`
+    );
+    return data;
+  }
+);
 
 const adminProductSlice = createSlice({
   name: "adminProducts",

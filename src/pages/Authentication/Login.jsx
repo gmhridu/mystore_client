@@ -1,28 +1,6 @@
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { IoEyeOutline } from "react-icons/io5";
-import { IoEyeOffOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import useAuth from "@/components/hooks/useAuth";
-import useAxiosSecure from "@/components/hooks/useAxiosSecure";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
-import { Input } from "@/components/ui/input";
 import CommonForm from "@/components/Common/CommonForm/CommonForm";
 import { loginFormControls } from "@/components/Common/config/config";
 import { useDispatch } from "react-redux";
@@ -30,18 +8,16 @@ import { googleSingIn, loginUser } from "@/store/Slice/authSlice/authSlice";
 import { useGoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
-  const location = useLocation();
   const dispatch = useDispatch();
   const formInstance = useForm();
-
-  const from = location.state || "/";
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleGoogleSignIn = useGoogleLogin({
     onSuccess: async (response) => {
       const result = await dispatch(googleSingIn(response.access_token));
       if (result.payload.success) {
         toast.success("Signed in successfully");
-        navigate(from);
       } else {
         toast.error("Google Sign-In failed.");
       }

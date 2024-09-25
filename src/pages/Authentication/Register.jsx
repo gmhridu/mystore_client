@@ -6,10 +6,12 @@ import toast from "react-hot-toast";
 import CommonForm from "@/components/Common/CommonForm/CommonForm";
 import { registerFormControls } from "@/components/Common/config/config";
 import { useDispatch } from "react-redux";
-import { googleSingIn, registerUser } from "@/store/Slice/authSlice/authSlice";
+import { googleSingIn, registerUser, setUser } from "@/store/Slice/authSlice/authSlice";
 import { useGoogleLogin } from "@react-oauth/google";
+import useAuth from "@/components/hooks/useAuth";
 
 const Register = () => {
+  const { createUser, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -17,18 +19,18 @@ const Register = () => {
 
   const from = location?.state || "/login";
 
-  const handleGoogleSignIn = useGoogleLogin({
-    onSuccess: async (response) => {
-      const result = await dispatch(googleSingIn(response.access_token));
-      if (result.payload.success) {
-        toast.success("Signed in successfully");
-        navigate(from);
+  const handleGoogleSignIn = async() => {
+    await setUser(dispatch(signInWithGoogle())).then((data) => {
+      if (data?.payload?.success) {
+        toast.success("User signed in successfully");
+        navigate('/');
       } else {
-        toast.error("Google Sign-In failed.");
+        toast.error("Failed to sign in with Google");
+        return;
       }
-    },
-    onError: () => toast.error("Google Sign-In failed."),
-  });
+    });
+
+  }
 
 
   

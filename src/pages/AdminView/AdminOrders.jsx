@@ -1,7 +1,10 @@
+import AdminOrdersView from '@/components/AdminLayout/AdminOrdersView';
 import React from 'react';
 
 const AdminOrders = () => {
-  return <div>AdminOrders</div>;
+  return (
+    <AdminOrdersView/>
+  );
 };
 
 export default AdminOrders;

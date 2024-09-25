@@ -48,13 +48,13 @@ const ProductCard = ({ product, isLoading, handleEditProduct, onDelete }) => {
         {user?.role === "admin" ? (
           <>
             <Button
-              className="w-full"
+              className="w-full bg-muted border text-muted-foreground hover:text-white"
               onClick={() => handleEditProduct(product)}
             >
               Edit
             </Button>
             <Button
-              className="w-full ml-2"
+              className="w-full ml-2 text-white bg-red-600"
               onClick={() => onDelete(product?._id)}
             >
               Delete

@@ -53,21 +53,35 @@ export const googleSingIn = createAsyncThunk(
 export const checkAuth = createAsyncThunk('/auth/check-auth', async () => {
   const { data } = await axios.get(
     `${import.meta.env.VITE_BASE_URL}/auth/check-auth`, {
+    withCredentials: true,
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Expires: '0',
+    }
+  }
+  );
+  return data;
+});
+
+export const logoutUser = createAsyncThunk('/auth/logout', async () => {
+  const {data} = await axios.post(
+    `${import.meta.env.VITE_BASE_URL}/auth/logout`,
+    {},
+    {
       withCredentials: true,
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        Expires: '0',
-      }
     }
   );
-  return data;;
-})
+  return data;
+});
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    setUser: (state, action) => {
+      state.isAuthenticated = true;
+      state.user = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -122,6 +136,10 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
+      }).addCase(logoutUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.user = null;
       });
   },
 });

@@ -15,7 +15,7 @@ const Image = ({ src, alt, width, height, ...rest }) => {
   image.resize(fill().width(width).height(height));
   return (
     <AdvancedImage
-      className="w-full h-full object-cover rounded-sm"
+      className="w-full h-full object-cover rounded-sm object-center"
       cldImg={image}
       alt={alt}
       {...rest}

@@ -41,7 +41,7 @@ const CommonForm = ({
   linkTo,
   linkToggleText,
   defaultValues = {},
-  isValid,
+  className
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(false);
@@ -52,15 +52,19 @@ const CommonForm = ({
   const methods = useForm({ defaultValues });
 
   return (
-    <div className="flex items-center justify-center overflow-hidden h-[90vh]">
-      <Card className="w-[450px] py-2">
+    <div className={`flex items-center justify-center overflow-hidden h-[90vh] ${className}`}>
+      <Card className="lg:w-[450px] py-2">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
           <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <form
+              onSubmit={methods.handleSubmit((data) =>
+                onSubmit(data, methods.reset)
+              )}
+            >
               {fields?.map((field, index) => (
                 <FormField
                   key={index}
@@ -151,11 +155,7 @@ const CommonForm = ({
                   )}
                 />
               ))}
-              <Button
-                type="submit"
-                className={`w-full my-4 ${!isValid ? "cursor-not-allowed" : ""}`}
-                disabled={!isValid}
-              >
+              <Button type="submit" className={`w-full my-4`}>
                 {buttonText}
               </Button>
               {googleSignInHandler && (
