@@ -24,8 +24,6 @@ const ShopOrders = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
 
-  console.log(paymentDetails);
-
   const handleOrderDetails = (getId) => {
     dispatch(getOrderDetails(getId));
   }

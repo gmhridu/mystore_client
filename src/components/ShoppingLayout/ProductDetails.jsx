@@ -77,15 +77,13 @@ const ProductDetails = ({ open, setOpen, handleAddToCart }) => {
     }
   };
 
-  if(isLoading) <Skeleton/>
-
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:p-12 max-w-[24rem] h-[97vh] sm:max-w-[95vw] sm:h-[68vh] lg:max-w-[95vw] lg:h-[65vh] xl:max-w-[50vw]">
-        {isLoading ? (
-          <Skeleton width={600} height={600} className={"w-full h-full"} />
-        ) : (
-          <div className="relative overflow-hidden rounded-lg">
+        <div className="relative overflow-hidden rounded-lg">
+          {isLoading ? (
+            <Skeleton />
+          ) : (
             <Image
               src={productDetails?.imageUrl?.split("/").pop().split(".")[0]}
               alt={productDetails?.title}
@@ -93,21 +91,21 @@ const ProductDetails = ({ open, setOpen, handleAddToCart }) => {
               height={600}
               className="aspect-square w-full h-full object-cover"
             />
-            {productDetails?.totalStock === 0 ? (
-              <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
-                Out Of Stock
-              </Badge>
-            ) : productDetails?.totalStock < 10 ? (
-              <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
-                {`Only ${productDetails?.totalStock} item left`}
-              </Badge>
-            ) : productDetails?.salePrice > 0 ? (
-              <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
-                Sale
-              </Badge>
-            ) : null}
-          </div>
-        )}
+          )}
+          {productDetails?.totalStock === 0 ? (
+            <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
+              Out Of Stock
+            </Badge>
+          ) : productDetails?.totalStock < 10 ? (
+            <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
+              {`Only ${productDetails?.totalStock} item left`}
+            </Badge>
+          ) : productDetails?.salePrice > 0 ? (
+            <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
+              Sale
+            </Badge>
+          ) : null}
+        </div>
         <div className="space-y-3">
           <div>
             <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>

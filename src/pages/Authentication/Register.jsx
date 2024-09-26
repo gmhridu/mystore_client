@@ -7,7 +7,6 @@ import CommonForm from "@/components/Common/CommonForm/CommonForm";
 import { registerFormControls } from "@/components/Common/config/config";
 import { useDispatch } from "react-redux";
 import { googleSingIn, registerUser, setUser } from "@/store/Slice/authSlice/authSlice";
-import { useGoogleLogin } from "@react-oauth/google";
 import useAuth from "@/components/hooks/useAuth";
 
 const Register = () => {

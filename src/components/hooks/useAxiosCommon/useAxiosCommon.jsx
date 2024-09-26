@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 const useAxiosCommon = () => {
     const axiosInstance = useMemo(()=>{
         return axios.create({
-            baseURL: import.meta.env.VITE_API_URL,
+          baseURL: import.meta.env.VITE_BASE_URL,
         });
     },[])
     return axiosInstance;

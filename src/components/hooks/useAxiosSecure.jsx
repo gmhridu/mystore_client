@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import useAuth from './useAuth';
 
 const axiosSecure = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: true,
 });
 
