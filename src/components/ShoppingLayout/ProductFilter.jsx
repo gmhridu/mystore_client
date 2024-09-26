@@ -14,7 +14,6 @@ const ProductFilter = ({ filter, handleFilter, onReset, isLoading }) => {
     handleFilter(keyItem, optionId, !isChecked);
   };
 
-  if (isLoading) return <Loader/>;
   return (
     <div className="bg-background rounded-lg shadow-sm">
       <div className="p-4 border-b">

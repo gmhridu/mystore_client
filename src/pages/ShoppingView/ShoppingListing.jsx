@@ -24,6 +24,7 @@ import { addToCartItem, getAllCart } from "@/store/Slice/Shop/cartSlice";
 import toast from "react-hot-toast";
 import notFound from "../../assets/empty.webp";
 import { Link } from "react-router-dom";
+import { useTransition } from "react";
 
 const createSearchParamsHelper = (filterParams, sort) => {
   const queryParams = Object.entries(filterParams)
@@ -49,6 +50,7 @@ const ShoppingListing = () => {
   const [loading, setLoading] = useState(false);
   const productCount = useMemo(() => products?.length || 0, [products]);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Add to cart
   const handleAddToCart = async (productId, getTotalStock) => {
@@ -89,22 +91,23 @@ const ShoppingListing = () => {
 
   // filters
   const handleFilter = debounce((sectionId, optionId) => {
-    setFilter((prev) => {
-      const updatedFilter = { ...prev };
-      if (!updatedFilter[sectionId]) updatedFilter[sectionId] = [optionId];
-      else {
-        const idx = updatedFilter[sectionId].indexOf(optionId);
-        if (idx > -1) updatedFilter[sectionId].splice(idx, 1);
-        else updatedFilter[sectionId].push(optionId);
-      }
-      if (updatedFilter[sectionId].length === 0)
-        delete updatedFilter[sectionId];
-
-      sessionStorage.setItem("filters", JSON.stringify(updatedFilter));
-      const queryString = createSearchParamsHelper(updatedFilter, sort);
-      setSearchParams(new URLSearchParams(queryString));
-      return updatedFilter;
-    });
+  
+      setFilter((prev) => {
+        const updatedFilter = { ...prev };
+        if (!updatedFilter[sectionId]) updatedFilter[sectionId] = [optionId];
+        else {
+          const idx = updatedFilter[sectionId].indexOf(optionId);
+          if (idx > -1) updatedFilter[sectionId].splice(idx, 1);
+          else updatedFilter[sectionId].push(optionId);
+        }
+        if (updatedFilter[sectionId].length === 0)
+          delete updatedFilter[sectionId];
+  
+        sessionStorage.setItem("filters", JSON.stringify(updatedFilter));
+        const queryString = createSearchParamsHelper(updatedFilter, sort);
+        setSearchParams(new URLSearchParams(queryString));
+        return updatedFilter;
+      });
   }, 300);
 
   // reset filters

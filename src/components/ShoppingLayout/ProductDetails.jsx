@@ -21,7 +21,7 @@ import { Skeleton } from "../ui/skeleton";
 
 const ProductDetails = ({ open, setOpen, handleAddToCart }) => {
   const { user } = useSelector((state) => state.auth);
-  const { productDetails, isLoading } = useSelector(
+  const { productDetails } = useSelector(
     (state) => state.shopProducts
   );
   const { reviews } = useSelector((state) => state.shopReview);
@@ -77,13 +77,12 @@ const ProductDetails = ({ open, setOpen, handleAddToCart }) => {
     }
   };
 
+  
+
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:p-12 max-w-[24rem] h-[97vh] sm:max-w-[95vw] sm:h-[68vh] lg:max-w-[95vw] lg:h-[65vh] xl:max-w-[50vw]">
         <div className="relative overflow-hidden rounded-lg">
-          {isLoading ? (
-            <Skeleton />
-          ) : (
             <Image
               src={productDetails?.imageUrl?.split("/").pop().split(".")[0]}
               alt={productDetails?.title}
@@ -91,7 +90,6 @@ const ProductDetails = ({ open, setOpen, handleAddToCart }) => {
               height={600}
               className="aspect-square w-full h-full object-cover"
             />
-          )}
           {productDetails?.totalStock === 0 ? (
             <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-800 text-white cursor-pointer">
               Out Of Stock

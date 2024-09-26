@@ -1,68 +1,49 @@
 import React from "react";
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const ShoppingViewMenuItems = [
-  {
-    id: "home",
-    label: "Home",
-    path: "/shop/home",
-  },
-  {
-    id: "men",
-    label: "Men",
-    path: "/shop/listing?Category=men",
-  },
-  {
-    id: "women",
-    label: "Women",
-    path: "/shop/listing?Category=women",
-  },
-  {
-    id: "kids",
-    label: "Kids",
-    path: "/shop/listing?Category=kids",
-  },
-  {
-    id: "accessories",
-    label: "Accessories",
-    path: "/shop/listing?Category=accessories",
-  },
-  {
-    id: "footwear",
-    label: "Footwear",
-    path: "/shop/listing?Category=footwear",
-  },
+  { id: "home", label: "Home", path: "/shop/home" },
+  { id: "men", label: "Men" },
+  { id: "women", label: "Women" },
+  { id: "kids", label: "Kids" },
+  { id: "accessories", label: "Accessories" },
+  { id: "footwear", label: "Footwear" },
 ];
+
+const useActivePath = (location) => {
+  const params = new URLSearchParams(location.search);
+  return params.get("Category")?.toLowerCase() || "home";
+};
 
 const ShoppingMenuItems = ({ toggleSideBar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const currentCategory = useActivePath(location);
 
-  const isActive = (path) => {
-    const params = new URLSearchParams(location.search);
-    const category = params.get("Category");
-
-    const pathCategory = path.split("Category=")[1];
-
-    return category?.toLowerCase() === pathCategory?.toLowerCase();
+  const handleNavigation = (category) => {
+    const path =
+      category === "home" ? "/shop/home" : `/shop/listing?Category=${category}`;
+    navigate(path);
+    toggleSideBar();
   };
 
   return (
     <nav className="flex flex-col mb-3 mt-8 lg:mb-0 lg:mt-0 lg:items-center gap-6 lg:flex-row">
-      {ShoppingViewMenuItems?.map((menuItem) => (
-        <NavLink
-          to={menuItem?.path}
-          key={menuItem?.id}
-          className={({ isActive: isNavLinkActive }) =>
-            `flex items-center gap-2 rounded-md px-3 py-2 hover:bg-muted text-foreground ${
-              isActive(menuItem?.path)
-                ? "bg-muted border text-muted-foreground"
-                : ""
-            }`
-          }
-          onClick={toggleSideBar}
+      {ShoppingViewMenuItems.map(({ id, label }) => (
+        <Button
+          key={id}
+          variant="ghost"
+          className={`flex items-center gap-2 rounded-md px-3 py-2 hover:bg-muted text-foreground  ${
+            currentCategory === id
+              ? "bg-muted border text-muted-foreground"
+              : ""
+          }`}
+          onClick={() => handleNavigation(id === "home" ? null : id)}
+          type="button"
         >
-          {menuItem?.label}
-        </NavLink>
+          {label}
+        </Button>
       ))}
     </nav>
   );
