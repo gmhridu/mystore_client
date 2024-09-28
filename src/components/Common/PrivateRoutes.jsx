@@ -11,14 +11,10 @@ const PrivateRoutes = ({ children }) => {
     (state) => state.auth
   );
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated && isLoading) {
-      navigate("/auth/login", { state: { from: location } });
-    }
     dispatch(checkAuth());
-  }, [isAuthenticated, isLoading, navigate, location, dispatch]);
+  }, [dispatch]);
 
   if (isLoading) return <Loader />;
 
