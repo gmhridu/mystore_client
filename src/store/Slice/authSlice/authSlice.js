@@ -6,7 +6,6 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   user: null,
-  accessToken: null,
 };
 
 export const registerUser = createAsyncThunk(
@@ -34,20 +33,6 @@ export const loginUser = createAsyncThunk('/auth/login', async (formData) => {
   return data;
 });
 
-export const refreshToken = createAsyncThunk('/auth/refresh-token', async () => { 
-  try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/auth/refresh-token`,
-      {},
-      {
-        withCredentials: true,
-      }
-    );
-    return data;
-  } catch (error) {
-    return error.response.data;
-  }
-})
 
 export const googleSingIn = createAsyncThunk(
   "/auth/google",
@@ -106,60 +91,73 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state) => {
         state.isLoading = false;
-        state.isAuthenticated = false;
+        state.isAuthenticated = false; 
         state.user = null;
+        state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
+        state.error = action.payload.message;
       })
+
+      
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-       state.isLoading = false;
-       state.isAuthenticated = action.payload.success;
-       state.user = action.payload.success ? action.payload.user : null;
+        state.isLoading = false;
+        state.isAuthenticated = true; 
+        state.user = action.payload.user; 
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.user = null;
         state.isAuthenticated = false;
+        state.user = null;
+        state.error = action.payload.message;
       })
-      .addCase(googleSingIn.pending, (state) => {
+
+      // Google Sign-In
+      .addCase(googleSignIn.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(googleSingIn.fulfilled, (state, action) => {
+      .addCase(googleSignIn.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = true;
+        state.isAuthenticated = true; 
         state.user = action.payload.user;
+        state.error = null;
       })
-      .addCase(googleSingIn.rejected, (state, action) => {
+      .addCase(googleSignIn.rejected, (state, action) => {
         state.isLoading = false;
-        state.user = null;
         state.isAuthenticated = false;
+        state.user = null;
+        state.error = action.payload.message;
       })
+
+      
       .addCase(checkAuth.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = action.payload.success;
+        state.isAuthenticated = action.payload.success; 
         state.user = action.payload.success ? action.payload.user : null;
+        state.error = null;
       })
-      .addCase(checkAuth.rejected, (state, action) => {
-        state.isLoading = false;
-        state.user = null;
-        state.isAuthenticated = false;
-      }).addCase(refreshToken.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.accessToken = action.payload.token;
-      }).addCase(logoutUser.fulfilled, (state, action) => {
+      .addCase(checkAuth.rejected, (state) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
+      })
+
+      
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.user = null; 
+        state.error = null;
       });
   },
 });
