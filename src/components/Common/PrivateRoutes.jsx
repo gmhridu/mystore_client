@@ -14,14 +14,11 @@ const PrivateRoutes = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(checkAuth()).then((data) => {
-      if (!data.payload.success) {
-        toast.error("Session expired. Please login again.");
-        dispatch(logoutUser());
-        navigate("/auth/login", { replace: true });
-      }
-    });
-  }, [dispatch, navigate]);
+    if (!isAuthenticated && isLoading) {
+      navigate("/auth/login", { state: { from: location } });
+    }
+    dispatch(checkAuth());
+  }, [isAuthenticated, isLoading, navigate, location, dispatch]);
 
   if (isLoading) return <Loader />;
 
