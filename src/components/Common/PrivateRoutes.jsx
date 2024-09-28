@@ -1,8 +1,9 @@
-import { checkAuth } from "@/store/Slice/authSlice/authSlice";
+import { checkAuth, logoutUser } from "@/store/Slice/authSlice/authSlice";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import Loader from "../shared/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const PrivateRoutes = ({ children }) => {
   const dispatch = useDispatch();
@@ -10,15 +11,20 @@ const PrivateRoutes = ({ children }) => {
     (state) => state.auth
   );
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
+    dispatch(checkAuth()).then((data) => {
+      if (!data.payload.success) {
+        toast.error("Session expired. Please login again.");
+        dispatch(logoutUser());
+        navigate("/auth/login", { replace: true });
+      }
+    });
+  }, [dispatch, navigate]);
 
- 
   if (isLoading) return <Loader />;
 
-  
   if (
     !isAuthenticated &&
     !["/auth/login", "/auth/register"].includes(location.pathname)
@@ -26,7 +32,6 @@ const PrivateRoutes = ({ children }) => {
     return <Navigate to="/auth/login" state={{ from: location }} />;
   }
 
- 
   if (
     isAuthenticated &&
     ["/auth/login", "/auth/register"].includes(location.pathname)
@@ -38,7 +43,6 @@ const PrivateRoutes = ({ children }) => {
     );
   }
 
-  
   if (
     isAuthenticated &&
     user?.role !== "admin" &&
@@ -47,7 +51,6 @@ const PrivateRoutes = ({ children }) => {
     return <Navigate to="/unauth-page" />;
   }
 
-  
   if (
     isAuthenticated &&
     user?.role === "admin" &&
@@ -56,7 +59,6 @@ const PrivateRoutes = ({ children }) => {
     return <Navigate to="/admin/dashboard" />;
   }
 
-  
   return <>{children}</>;
 };
 
