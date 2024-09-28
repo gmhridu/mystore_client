@@ -6,6 +6,7 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   user: null,
+  accessToken: null,
 };
 
 export const registerUser = createAsyncThunk(
@@ -32,6 +33,21 @@ export const loginUser = createAsyncThunk('/auth/login', async (formData) => {
   );
   return data;
 });
+
+export const refreshToken = createAsyncThunk('/auth/refresh-token', async () => { 
+  try {
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/auth/refresh-token`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data;
+  }
+})
 
 export const googleSingIn = createAsyncThunk(
   "/auth/google",
@@ -136,6 +152,10 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
+      }).addCase(refreshToken.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.accessToken = action.payload.token;
       }).addCase(logoutUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = false;
