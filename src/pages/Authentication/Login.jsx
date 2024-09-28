@@ -25,7 +25,6 @@ const Login = () => {
     onError: () => toast.error("Google Sign-In failed."),
   });
 
-  // ok
 
  
   const onSubmit = async (data) => {
