@@ -53,13 +53,14 @@ export const googleSingIn = createAsyncThunk(
 
 export const checkAuth = createAsyncThunk('/auth/check-auth', async () => {
   const { data } = await axios.get(
-    `${import.meta.env.VITE_BASE_URL}/auth/check-auth`, {
-    withCredentials: true,
-    headers: {
-      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      Expires: '0',
+    `${import.meta.env.VITE_BASE_URL}/auth/check-auth`,
+    {
+      withCredentials: true,
+      headers: {
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
     }
-  }
   );
   return data;
 });
