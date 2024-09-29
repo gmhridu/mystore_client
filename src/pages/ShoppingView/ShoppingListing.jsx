@@ -60,28 +60,31 @@ const ShoppingListing = () => {
       const indexOfCurrentItem = getCartItems.findIndex(
         (item) => item.productId === productId
       );
-      if(indexOfCurrentItem > -1){
+      if (indexOfCurrentItem > -1) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
 
         if (getQuantity + 1 > getTotalStock) {
           toast.error("You can't add more than available stock");
           return;
         }
-        
       }
     }
-    await dispatch(
-      addToCartItem({ userId: user?.id, productId: productId, quantity: 1 })
-    ).then((data) => {
+
+    try {
+      const data = await dispatch(
+        addToCartItem({ userId: user?.id, productId: productId, quantity: 1 })
+      );
       if (data?.payload?.success) {
         toast.success("Product is added to cart");
-        dispatch(getAllCart(user?.id));
+        await dispatch(getAllCart(user?.id));
       }
-    });
+    } catch (error) {
+      console.error("Failed to add product to cart", error);
+    }
   };
 
   // sort
-  const handleSort = debounce((value) => {
+  const handleSort = debounce(async (value) => {
     setSort(value);
     sessionStorage.setItem("sort", value);
 
@@ -90,32 +93,31 @@ const ShoppingListing = () => {
   }, 300);
 
   // filters
-  const handleFilter = debounce((sectionId, optionId) => {
-  
-      setFilter((prev) => {
-        const updatedFilter = { ...prev };
-        if (!updatedFilter[sectionId]) updatedFilter[sectionId] = [optionId];
-        else {
-          const idx = updatedFilter[sectionId].indexOf(optionId);
-          if (idx > -1) updatedFilter[sectionId].splice(idx, 1);
-          else updatedFilter[sectionId].push(optionId);
-        }
-        if (updatedFilter[sectionId].length === 0)
-          delete updatedFilter[sectionId];
-  
-        sessionStorage.setItem("filters", JSON.stringify(updatedFilter));
-        const queryString = createSearchParamsHelper(updatedFilter, sort);
-        setSearchParams(new URLSearchParams(queryString));
-        return updatedFilter;
-      });
+  const handleFilter = debounce(async (sectionId, optionId) => {
+    setFilter((prev) => {
+      const updatedFilter = { ...prev };
+      if (!updatedFilter[sectionId]) updatedFilter[sectionId] = [optionId];
+      else {
+        const idx = updatedFilter[sectionId].indexOf(optionId);
+        if (idx > -1) updatedFilter[sectionId].splice(idx, 1);
+        else updatedFilter[sectionId].push(optionId);
+      }
+      if (updatedFilter[sectionId].length === 0)
+        delete updatedFilter[sectionId];
+
+      sessionStorage.setItem("filters", JSON.stringify(updatedFilter));
+      const queryString = createSearchParamsHelper(updatedFilter, sort);
+      setSearchParams(new URLSearchParams(queryString));
+      return updatedFilter;
+    });
   }, 300);
 
   // reset filters
-  const resetFilters = () => {
+  const resetFilters = async () => {
     setFilter({});
     sessionStorage.removeItem("filters");
     setSearchParams({});
-    dispatch(
+    await dispatch(
       getShopProducts({ filterParams: {}, sortParams: "price-lowtohigh" })
     );
   };
@@ -146,14 +148,17 @@ const ShoppingListing = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (isFiltersLoaded) {
-      setLoading(true);
-      dispatch(
-        getShopProducts({ filterParams: filter, sortParams: sort })
-      ).then(() => {
+    const fetchProducts = async () => {
+      if (isFiltersLoaded) {
+        setLoading(true);
+        await dispatch(
+          getShopProducts({ filterParams: filter, sortParams: sort })
+        );
         setLoading(false);
-      });
-    }
+      }
+    };
+
+    fetchProducts();
   }, [dispatch, filter, sort, searchParams, isFiltersLoaded]);
 
   if (loading) return <Loader />;
@@ -201,22 +206,20 @@ const ShoppingListing = () => {
         </div>
         {products && products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-            {products && products.length > 0
-              ? products?.map((product) => (
-                  <ShoppingProductTile
-                    key={product?._id}
-                    product={product}
-                    handleGetProductDetails={handleGetProductDetails}
-                    handleAddToCart={handleAddToCart}
-                    isLoading={isLoading}
-                  />
-                ))
-              : null}
+            {products?.map((product) => (
+              <ShoppingProductTile
+                key={product?._id}
+                product={product}
+                handleGetProductDetails={handleGetProductDetails}
+                handleAddToCart={handleAddToCart}
+                isLoading={isLoading}
+              />
+            ))}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-[80%] mx-auto space-y-3">
             <div className="flex flex-col items-center justify-center">
-                <img className="w-32 h-full" src={notFound} alt="Empty Product"/>
+              <img className="w-32 h-full" src={notFound} alt="Empty Product" />
             </div>
             <div className="flex flex-col items-center justify-center space-y-3">
               <h2>No Result found!!!</h2>

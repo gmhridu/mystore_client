@@ -4,14 +4,13 @@ import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
-import Loader from "../shared/Loader/Loader";
 
 const ProductFilter = ({ filter, handleFilter, onReset, isLoading }) => {
-  const handleCheckboxChanged = (keyItem, optionId) => {
+  const handleCheckboxChanged = async(keyItem, optionId) => {
     const isChecked =
       filter && filter[keyItem] && filter[keyItem].includes(optionId);
 
-    handleFilter(keyItem, optionId, !isChecked);
+   await handleFilter(keyItem, optionId, !isChecked);
   };
 
   return (
