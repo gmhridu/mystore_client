@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Loader from "../shared/Loader/Loader";
 import { useNavigate } from "react-router-dom";
-import { Navigate } from "react-router-dom";
 import { replace } from "react-router-dom";
 
 const PrivateRoutes = ({ children }) => {

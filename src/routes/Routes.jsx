@@ -17,8 +17,35 @@ import PrivateRoutes from "@/components/Common/PrivateRoutes";
 import UnauthPage from "@/pages/UnauthPage/UnauthPage";
 import OrderProcessing from "@/components/ShoppingLayout/OrderProcessing";
 import PaymentSuccessful from "@/components/ShoppingLayout/PaymentSuccessful";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
+const RootRedirect = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/auth/login", { replace: true });
+    } else if (user && isAuthenticated) {
+      if (user?.role === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/shop/home", { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  return null;
+};
+
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootRedirect/>
+  },
   {
     path: "/auth",
     element: (
