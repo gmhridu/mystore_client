@@ -10,7 +10,7 @@ const ProductFilter = ({ filter, handleFilter, onReset, isLoading }) => {
     const isChecked =
       filter && filter[keyItem] && filter[keyItem].includes(optionId);
 
-   await handleFilter(keyItem, optionId, !isChecked);
+   await handleFilter(keyItem, optionId, !isChecked, true);
   };
   // ok
 
