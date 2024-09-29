@@ -7,6 +7,8 @@ import Loader from "../shared/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import { replace } from "react-router-dom";
 
+// private routes
+
 const PrivateRoutes = ({ children }) => {
   const dispatch = useDispatch();
   const { user, isAuthenticated, isLoading } = useSelector(
