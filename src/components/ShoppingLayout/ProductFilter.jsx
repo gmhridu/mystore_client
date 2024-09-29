@@ -6,12 +6,23 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 
 const ProductFilter = ({ filter, handleFilter, onReset, isLoading }) => {
-  const handleCheckboxChanged = async(keyItem, optionId) => {
-    const isChecked =
-      filter && filter[keyItem] && filter[keyItem].includes(optionId);
+ const handleCheckboxChanged = async (keyItem, optionId) => {
+   
+   const isChecked =
+     filter && filter[keyItem] && filter[keyItem].includes(optionId);
 
-   await handleFilter(keyItem, optionId, !isChecked);
-  };
+   
+   isLoading(true);
+
+   try {
+     
+     await handleFilter(keyItem, optionId, !isChecked);
+   } finally {
+     
+     isLoading(false);
+   }
+ };
+
 
   return (
     <div className="bg-background rounded-lg shadow-sm">
@@ -38,6 +49,7 @@ const ProductFilter = ({ filter, handleFilter, onReset, isLoading }) => {
                       onCheckedChange={() =>
                         handleCheckboxChanged(keyItem, option?.id)
                       }
+                      disabled={isLoading}
                     />
 
                     {option?.label}

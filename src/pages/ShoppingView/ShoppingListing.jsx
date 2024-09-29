@@ -93,24 +93,38 @@ const ShoppingListing = () => {
   }, 300);
 
   // filters
-  const handleFilter = debounce(async (sectionId, optionId) => {
-    setFilter((prev) => {
-      const updatedFilter = { ...prev };
-      if (!updatedFilter[sectionId]) updatedFilter[sectionId] = [optionId];
-      else {
-        const idx = updatedFilter[sectionId].indexOf(optionId);
-        if (idx > -1) updatedFilter[sectionId].splice(idx, 1);
-        else updatedFilter[sectionId].push(optionId);
-      }
-      if (updatedFilter[sectionId].length === 0)
-        delete updatedFilter[sectionId];
+  const handleFilter = debounce(
+    async (sectionId, optionId, isCategoryChange = false) => {
+      setFilter((prev) => {
+        const updatedFilter = { ...prev };
 
-      sessionStorage.setItem("filters", JSON.stringify(updatedFilter));
-      const queryString = createSearchParamsHelper(updatedFilter, sort);
-      setSearchParams(new URLSearchParams(queryString));
-      return updatedFilter;
-    });
-  }, 300);
+        
+        if (isCategoryChange) {
+          Object.keys(updatedFilter).forEach((key) => {
+            delete updatedFilter[key];
+          });
+        }
+
+        
+        if (!updatedFilter[sectionId]) updatedFilter[sectionId] = [optionId];
+        else {
+          const idx = updatedFilter[sectionId].indexOf(optionId);
+          if (idx > -1) updatedFilter[sectionId].splice(idx, 1);
+          else updatedFilter[sectionId].push(optionId);
+        }
+
+        if (updatedFilter[sectionId].length === 0)
+          delete updatedFilter[sectionId];
+
+        sessionStorage.setItem("filters", JSON.stringify(updatedFilter));
+        const queryString = createSearchParamsHelper(updatedFilter, sort);
+        setSearchParams(new URLSearchParams(queryString));
+        return updatedFilter;
+      });
+    },
+    300
+  );
+
 
   // reset filters
   const resetFilters = async () => {
