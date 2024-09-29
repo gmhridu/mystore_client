@@ -2,7 +2,6 @@ import Main from "@/layouts/Main";
 import Login from "@/pages/Authentication/Login";
 import Register from "@/pages/Authentication/Register";
 import { createBrowserRouter } from "react-router-dom";
-import Auth from "@/components/Auth/Auth";
 import AdminLayout from "@/components/AdminLayout/AdminLayout";
 import AdminDashboard from "@/pages/AdminView/AdminDashboard";
 import AdminProducts from "@/pages/AdminView/AdminProducts";
@@ -18,30 +17,8 @@ import PrivateRoutes from "@/components/Common/PrivateRoutes";
 import UnauthPage from "@/pages/UnauthPage/UnauthPage";
 import OrderProcessing from "@/components/ShoppingLayout/OrderProcessing";
 import PaymentSuccessful from "@/components/ShoppingLayout/PaymentSuccessful";
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-
-const RootRedirect = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/auth/login" />;
-  }
-
-  if (user && isAuthenticated) {
-    if (user?.role === "admin") {
-      return <Navigate to="/admin/dashboard" />;
-    }
-
-    return <Navigate to="/shop/home" />;
-  };
-};
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootRedirect />,
-  },
   {
     path: "/auth",
     element: (

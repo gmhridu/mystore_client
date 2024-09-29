@@ -1,9 +1,12 @@
-import { checkAuth, logoutUser } from "@/store/Slice/authSlice/authSlice";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
+import { checkAuth } from "@/store/Slice/authSlice/authSlice";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
 import Loader from "../shared/Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { replace } from "react-router-dom";
 
 const PrivateRoutes = ({ children }) => {
   const dispatch = useDispatch();
@@ -11,48 +14,69 @@ const PrivateRoutes = ({ children }) => {
     (state) => state.auth
   );
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
+    if (!isAuthenticated) {
+      dispatch(checkAuth());
+    }
+  }, [dispatch, isAuthenticated]);
 
+  
   if (isLoading) return <Loader />;
 
-  if (
-    !isAuthenticated &&
-    !["/auth/login", "/auth/register"].includes(location.pathname)
-  ) {
-    return <Navigate to="/auth/login" state={{ from: location }} />;
+  
+  if (!isAuthenticated) {
+    if (
+      location.pathname.includes("login") ||
+      location.pathname.includes("register")
+    ) {
+      return <>{children}</>; 
+    }
+    return navigate('/auth/login', {state: {from: location}}, replace);
   }
 
-  if (
-    isAuthenticated &&
-    ["/auth/login", "/auth/register"].includes(location.pathname)
-  ) {
-    return user?.role === "admin" ? (
-      <Navigate to="/admin/dashboard" />
-    ) : (
-      <Navigate to="/shop/home" />
-    );
+
+  if (isAuthenticated) {
+    if (
+      location.pathname.includes("login") ||
+      location.pathname.includes("register")
+    ) {
+      return user?.role === "admin"
+        ? navigate("/admin/dashboard", { state: { from: location } }, replace)
+        : navigate("/shop/home", { state: { from: location } }, replace);
+    }
+
+    
+    if (location.pathname.startsWith("/shop")) {
+      return <>{children}</>;
+    }
+
+    
+    if (user?.role === "admin" && location.pathname.startsWith("/admin")) {
+      return <>{children}</>;
+    }
+
+    
+    if (user?.role === "admin" && location.pathname.startsWith("/shop")) {
+      return navigate(
+        "/admin/dashboard",
+        { state: { from: location } },
+        replace
+      );
+    }
+
+    
+    if (user?.role !== "admin" && location.pathname.startsWith("/admin")) {
+      return navigate(
+        "/unauth/page",
+        { state: { from: location } },
+        replace
+      );
+    }
   }
 
-  if (
-    isAuthenticated &&
-    user?.role !== "admin" &&
-    location.pathname.includes("/admin")
-  ) {
-    return <Navigate to="/unauth-page" />;
-  }
-
-  if (
-    isAuthenticated &&
-    user?.role === "admin" &&
-    location.pathname.includes("/shop")
-  ) {
-    return <Navigate to="/admin/dashboard" />;
-  }
-
-  return <>{children}</>;
+  return <>{children}</>; 
 };
 
 export default PrivateRoutes;

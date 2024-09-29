@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 import CommonForm from "@/components/Common/CommonForm/CommonForm";
 import { registerFormControls } from "@/components/Common/config/config";
 import { useDispatch } from "react-redux";
-import { googleSingIn, registerUser, setUser } from "@/store/Slice/authSlice/authSlice";
 import useAuth from "@/components/hooks/useAuth";
+import { registerUser, setUser } from "@/store/Slice/authSlice/authSlice";
 
 const Register = () => {
   const { createUser, signInWithGoogle } = useAuth();
@@ -31,8 +31,6 @@ const Register = () => {
 
   }
 
-
-  
 
   const onSubmit = async (data) => {
     const formData = {

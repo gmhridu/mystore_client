@@ -4,8 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CommonForm from "@/components/Common/CommonForm/CommonForm";
 import { loginFormControls } from "@/components/Common/config/config";
 import { useDispatch } from "react-redux";
-import { googleSingIn, loginUser } from "@/store/Slice/authSlice/authSlice";
 import { useGoogleLogin } from "@react-oauth/google";
+import { googleSignIn, loginUser } from "@/store/Slice/authSlice/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const Login = () => {
 
   const handleGoogleSignIn = useGoogleLogin({
     onSuccess: async (response) => {
-      const result = await dispatch(googleSingIn(response.access_token));
+      const result = await dispatch(googleSignIn(response.access_token));
       if (result.payload.success) {
         toast.success("Signed in successfully");
       } else {
@@ -30,23 +30,29 @@ const Login = () => {
   const onSubmit = async (data) => {
     const formData = {
       email: data?.email,
-      password: data?.password  
-    }
+      password: data?.password,
+    };
     try {
-     await dispatch(loginUser(formData))
-        .then((data) => {
-        if(data?.payload?.success){
-          toast.success(data?.payload?.message);
+      const result = await dispatch(loginUser(formData));
+      if (result?.payload?.success) {
+        toast.success(result?.payload?.message);
+
+        
+        if (result?.payload?.user?.role === "admin") {
+          navigate("/admin/dashboard");
         } else {
-          toast.error("Something is wrong please try again later!");
-          formInstance.reset();
+          navigate("/shop/home");
         }
-      })
+      } else {
+        toast.error("Something is wrong please try again later!");
+        formInstance.reset();
+      }
     } catch (error) {
       toast.error("Something is wrong please try again later");
       console.log("error", error);
     }
   };
+
   return (
     <CommonForm
       fields={loginFormControls(formInstance.control)}

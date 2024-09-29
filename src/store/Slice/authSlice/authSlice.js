@@ -1,80 +1,119 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false,
   user: null,
+  error: null,
 };
 
+// Register user
 export const registerUser = createAsyncThunk(
-  "/auth/register",
-  async (formData) => {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/auth/register`,
-      formData,
-      {
-        withCredentials: true,
-      }
-    );
-    return data;
+  "auth/registerUser",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/register`,
+        formData,
+        { withCredentials: true }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
-export const loginUser = createAsyncThunk('/auth/login', async (formData) => {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_BASE_URL}/auth/login`,
-    formData,
-    {
-      withCredentials: true,
+// Login user
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/login`,
+        formData,
+        { withCredentials: true }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
-  );
-  return data;
-});
+  }
+);
 
-
-export const googleSingIn = createAsyncThunk(
-  "/auth/google",
-  async (token, thunkAPI) => {
+// Google Sign-In
+export const googleSignIn = createAsyncThunk(
+  "auth/googleSignIn",
+  async (tokenId, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/google`,
+        { idToken: tokenId },
+        { withCredentials: true }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
+export const checkAuth = createAsyncThunk(
+  "auth/checkAuth",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/check-auth`,
         {
-          token,
+          withCredentials: true,
+          headers: {
+            "Cache-Control":
+              "no-store, no-cache, must-revalidate, proxy-revalidate",
+          },
         }
       );
       return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const checkAuth = createAsyncThunk('/auth/check-auth', async () => {
-  const { data } = await axios.get(
-    `${import.meta.env.VITE_BASE_URL}/auth/check-auth`,
-    {
-      withCredentials: true,
-      headers: {
-        "Cache-Control":
-          "no-store, no-cache, must-revalidate, proxy-revalidate",
-      },
+// Logout user
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
-  );
-  return data;
-});
+  }
+);
 
-export const logoutUser = createAsyncThunk('/auth/logout', async () => {
-  const {data} = await axios.post(
-    `${import.meta.env.VITE_BASE_URL}/auth/logout`,
-    {},
-    {
-      withCredentials: true,
+// Refresh token
+export const refreshToken = createAsyncThunk(
+  "auth/refreshToken",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/refresh-token`,
+        {},
+        { withCredentials: true }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
-  );
-  return data;
-});
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -83,28 +122,33 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.isAuthenticated = true;
       state.user = action.payload;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Register
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = false;
+        state.isAuthenticated = false; // Registration doesn't log in the user
         state.user = null;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.user = null;
         state.isAuthenticated = false;
+        state.user = null;
         state.error = action.payload.message;
       })
 
+      // Login
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -120,24 +164,27 @@ const authSlice = createSlice({
       })
 
       // Google Sign-In
-      .addCase(googleSingIn.pending, (state) => {
+      .addCase(googleSignIn.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
-      .addCase(googleSingIn.fulfilled, (state, action) => {
+      .addCase(googleSignIn.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.error = null;
       })
-      .addCase(googleSingIn.rejected, (state, action) => {
+      .addCase(googleSignIn.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
         state.error = action.payload.message;
       })
 
+      // Check Auth
       .addCase(checkAuth.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -145,17 +192,35 @@ const authSlice = createSlice({
         state.user = action.payload.success ? action.payload.user : null;
         state.error = null;
       })
-      .addCase(checkAuth.rejected, (state) => {
+      .addCase(checkAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
+        state.error = action.payload.message;
       })
 
+      // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
         state.error = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload.message;
+      })
+
+      // Refresh Token
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(refreshToken.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload.message;
       });
   },
 });
