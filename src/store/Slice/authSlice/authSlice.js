@@ -62,20 +62,29 @@ export const googleSignIn = createAsyncThunk(
 
 export const checkAuth = createAsyncThunk(
   "auth/checkAuth",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/auth/check-auth`,
-        {
-          withCredentials: true,
-          headers: {
-            "Cache-Control":
-              "no-store, no-cache, must-revalidate, proxy-revalidate",
-          },
-        }
+        { withCredentials: true }
       );
       return data;
     } catch (error) {
+      if (
+        error.response.status === 401 &&
+        error.response.data.message === "Token expired!"
+      ) {
+        try {
+          await dispatch(refreshToken());
+          const { data } = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/check-auth`,
+            { withCredentials: true }
+          );
+          return data;
+        } catch (refreshError) {
+          return rejectWithValue(refreshError.response.data);
+        }
+      }
       return rejectWithValue(error.response.data);
     }
   }
