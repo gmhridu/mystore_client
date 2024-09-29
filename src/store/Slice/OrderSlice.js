@@ -16,7 +16,8 @@ export const makePaymentFromStripe = createAsyncThunk(
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/stripe/create-order`,
-        { cartItems, userId, totalAmount, address, cartId }
+        { cartItems, userId, totalAmount, address, cartId },
+        {withCredentials: true}
       );
       return data;
     } catch (error) {
