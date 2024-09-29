@@ -9,6 +9,8 @@ import HeaderRightContent from "./HeaderRightContent";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 
+
+
 const ShoppingHeader = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const toggleSheet = () => setIsSheetOpen(!isSheetOpen);
